@@ -1,7 +1,7 @@
 import { useContext } from "react";
 
 // Mengimpor AuthContext yang sudah dibuat.
-import { AuthContext } from "../Context/authContext";
+import { AuthContext } from "../Context/AuthContext";
 
 // Custom hook untuk membaca authentication state.
 export function useAuth() {

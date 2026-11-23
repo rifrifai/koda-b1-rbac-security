@@ -47,7 +47,7 @@ builder.Services.AddCors(options =>
 {
 	options.AddPolicy("ReactClient", policy =>
 	{
-		policy.WithOrigins(allowedOrigins).AllowAnyHeader().AllowAnyMethod();
+		policy.WithOrigins(allowedOrigins).AllowAnyHeader().AllowAnyMethod().AllowCredentials();
 	});
 });
 
@@ -144,16 +144,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddRateLimiter(option =>
-{
-	option.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
-	option.AddConcurrencyLimiter("category-writes", limiter =>
-	{
-		limiter.PermitLimit = 8;
-		limiter.QueueLimit = 0;
-	});
-});
-
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -176,8 +166,10 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
 app.UseMiddleware<RequestTimingMiddleware>();
 app.UseCors("ReactClient");
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseRateLimiter();

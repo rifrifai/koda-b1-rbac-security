@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../Hooks/UseAuth";
+import { useAuth } from "../Hooks/useAuth";
 
 const getErr = (err, fallback) =>
     err instanceof Error ? err.message : fallback;

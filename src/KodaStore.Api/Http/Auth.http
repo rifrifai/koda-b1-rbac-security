@@ -5,9 +5,9 @@ POST {{baseUrl}}/register
 Content-Type: application/json
 
 {
-    "email": "admin@mail.com",
+    "email": "rifai@mail.com",
     "password": "Qwerty!23",
-    "displayName": "Admin Budi"
+    "displayName": "Abdurrohman Rifai"
 }
 
 ### Login
@@ -15,8 +15,8 @@ POST {{baseUrl}}/login
 Content-Type: application/json
 
 {
-    "email": "bagus@mail.com",
-    "password": "Qwert!23"
+    "email": "admin@mail.com",
+    "password": "Qwerty!23"
 }
 
 ### PRoduct

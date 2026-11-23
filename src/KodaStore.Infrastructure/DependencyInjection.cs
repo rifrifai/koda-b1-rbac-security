@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace KodaStore.Infrastructure;
+
 public static class DependencyInjection
 {
 	public static IServiceCollection AddInfrastucture(this IServiceCollection services, IConfiguration configuration)
@@ -55,7 +56,7 @@ public static class DependencyInjection
 		services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
 		services.AddScoped<IJwtTokenService, JwtTokenService>();
 		services.AddScoped<IRefreshTokenService, RefreshTokenService>();
-		
+
 		return services;
 	}
 }
