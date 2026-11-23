@@ -1,0 +1,58 @@
+@host = http://localhost:5231/api/v1/auth
+
+### TEST 1 — LOGIN CUSTOMER
+
+# @name loginCustomer
+POST {{host}}/api/v1/auth/login
+Content-Type: application/json
+
+{
+    "email": "budi@example.com",
+    "password": "KodaStore#2026"
+}
+
+
+### TEST 2 — PERIKSA ROLE CUSTOMER DARI JWT
+
+GET {{host}}/api/v1/auth/me
+Accept: application/json
+Authorization: Bearer {{loginCustomer.response.body.accessToken}}
+
+
+### TEST 3 — LOGIN ADMIN
+
+# @name loginAdmin
+POST {{host}}/api/v1/auth/login
+Content-Type: application/json
+
+{
+    "email": "admin@mail.com",
+    "password": "Qwerty!23"
+}
+
+
+### TEST 4 — PERIKSA ROLE ADMIN DARI JWT
+
+GET {{host}}/api/v1/auth/me
+Accept: application/json
+Authorization: Bearer {{loginAdmin.response.body.accessToken}}
+
+
+### TEST 5 — ENDPOINT ME TANPA JWT
+### EXPECTED: 401
+
+GET {{host}}/api/v1/auth/me
+Accept: application/json
+
+
+### TEST 6 — ENDPOINT ME DENGAN TOKEN INVALID
+### EXPECTED: 401
+
+GET {{host}}/api/v1/auth/me
+Authorization: Bearer invalid-token
+Accept: application/json
+
+
+### TEST 7 — PUBLIC PRODUCT API TETAP BERJALAN
+GET {{host}}/api/v1/products
+Accept: application/json

@@ -1,10 +1,6 @@
-using KodaStore.Infrastructure.Persistence;
-using KodaStore.Application.Repositories;
 using KodaStore.Infrastructure.Seeding;
 using KodaStore.Application.Services;
 using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.EntityFrameworkCore;
-using KodaStore.Infrastructure.Repositories;
 using KodaStore.Api.Middlewares;
 using KodaStore.Infrastructure;
 using KodaStore.Infrastructure.Identity;
@@ -12,6 +8,7 @@ using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +18,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddInfrastucture(builder.Configuration);
 
 var jwtOption = builder.Configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>() ?? throw new InvalidOperationException("Konfigurasi JWT belum tersedia");
+
 if (string.IsNullOrWhiteSpace(jwtOption.Issuer)) throw new InvalidOperationException("Jwt: Issuer wajib diisi");
 if (string.IsNullOrWhiteSpace(jwtOption.Audience)) throw new InvalidOperationException("Jwt: Audience wajib diisi");
 if (jwtOption.AccessTokenMinutes is < 1 or > 60) throw new InvalidOperationException("Jwt: ACCESS Token Minutes antara 1 - 60");
@@ -160,6 +158,13 @@ var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
+	using var scope = app.Services.CreateScope();
+
+	var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+	var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+	var bootstrapAdminEmail = app.Configuration["RoleBootstrap:AdminEmail"];
+
+	await RoleSeedData.SeedAsync(roleManager, userManager, bootstrapAdminEmail);
 	app.MapOpenApi();
 }
 else

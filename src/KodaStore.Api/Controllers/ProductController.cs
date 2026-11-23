@@ -1,25 +1,22 @@
 using KodaStore.Application.DTOs;
+using KodaStore.Application.Security;
 using KodaStore.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KodaStore.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/products")]
-public sealed class ProductController : ControllerBase
+[Authorize(Roles = AppRoles.Admin)]
+public sealed class ProductController(IProductService service) : ControllerBase
 {
-    private readonly IProductService _service;
-
-    public ProductController(IProductService service)
-    {
-        _service = service;
-    }
+    private readonly IProductService _service = service;
 
     // GET /api/v1/products
+    [AllowAnonymous]
     [HttpGet]
-    [ProducesResponseType(
-        typeof(IReadOnlyList<ProductResponse>),
-        StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IReadOnlyList<ProductResponse>), StatusCodes.Status200OK)]
     public async Task<ActionResult<IReadOnlyList<ProductResponse>>> GetAll(
         CancellationToken cancellationToken)
     {
@@ -30,13 +27,10 @@ public sealed class ProductController : ControllerBase
     }
 
     // GET /api/v1/products/PR001
+    [AllowAnonymous]
     [HttpGet("{productCode}")]
-    [ProducesResponseType(
-        typeof(ProductResponse),
-        StatusCodes.Status200OK)]
-    [ProducesResponseType(
-        typeof(ProblemDetails),
-        StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ProductResponse>> GetByCode(
         [FromRoute] string productCode,
         CancellationToken cancellationToken)
@@ -57,15 +51,9 @@ public sealed class ProductController : ControllerBase
 
     // POST /api/v1/products
     [HttpPost]
-    [ProducesResponseType(
-        typeof(ProductResponse),
-        StatusCodes.Status201Created)]
-    [ProducesResponseType(
-        typeof(ValidationProblemDetails),
-        StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(
-        typeof(ProblemDetails),
-        StatusCodes.Status409Conflict)]
+    [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
     public async Task<ActionResult<ProductResponse>> Create(
         [FromBody] ProductRequest request,
         CancellationToken cancellationToken)
@@ -99,15 +87,9 @@ public sealed class ProductController : ControllerBase
 
     // PUT /api/v1/products/PR001
     [HttpPut("{productCode}")]
-    [ProducesResponseType(
-        typeof(ProductResponse),
-        StatusCodes.Status200OK)]
-    [ProducesResponseType(
-        typeof(ValidationProblemDetails),
-        StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(
-        typeof(ProblemDetails),
-        StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProductResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<ActionResult<ProductResponse>> Update(
         [FromRoute] string productCode,
         [FromBody] UpdateProductRequest request,
@@ -140,11 +122,8 @@ public sealed class ProductController : ControllerBase
 
     // DELETE /api/v1/products/PR001
     [HttpDelete("{productCode}")]
-    [ProducesResponseType(
-        StatusCodes.Status204NoContent)]
-    [ProducesResponseType(
-        typeof(ProblemDetails),
-        StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(
         [FromRoute] string productCode,
         CancellationToken cancellationToken)

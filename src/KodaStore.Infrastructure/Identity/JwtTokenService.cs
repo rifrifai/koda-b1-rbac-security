@@ -31,6 +31,11 @@ public class JwtTokenService(IOptions<JwtOptions> options) : IJwtTokenService
 			new(JwtRegisteredClaimNames.Iat, now.ToUnixTimeSeconds().ToString(CultureInfo.InvariantCulture), ClaimValueTypes.Integer64)
 		};
 
+		foreach (var role in user.Roles.Distinct(StringComparer.Ordinal))
+		{
+			claims.Add(new Claim("role", role));
+		}
+
 		var jwt = new JwtSecurityToken(
 			issuer: _options.Issuer,
 			audience: _options.Audience,

@@ -5,9 +5,9 @@ POST {{baseUrl}}/register
 Content-Type: application/json
 
 {
-    "email": "bagus@mail.com",
-    "password": "Qwert!23",
-    "displayName": "Bagus Susilo"
+    "email": "admin@mail.com",
+    "password": "Qwerty!23",
+    "displayName": "Admin Budi"
 }
 
 ### Login
